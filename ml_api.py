@@ -11,6 +11,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {"message": "ML Server is awake"}
+
+
 @app.get("/predict/{product_id}")
 def predict(product_id: str):
     try:
