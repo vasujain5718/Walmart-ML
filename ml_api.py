@@ -4,7 +4,6 @@ from predict_from_model import predict_from_saved_model
 
 app = FastAPI()
 
-# Allow all origins (for dev; restrict in prod)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,5 +13,11 @@ app.add_middleware(
 
 @app.get("/predict/{product_id}")
 def predict(product_id: str):
-    result = predict_from_saved_model(product_id)
-    return result
+    try:
+        result = predict_from_saved_model(product_id)
+        if isinstance(result, dict) and "error" in result:
+            return {"error": result["error"]}
+        return result
+    except Exception as e:
+        print(f"Error in prediction: {e}")
+        return {"error": str(e)}
